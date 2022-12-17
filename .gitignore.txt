@@ -1,6 +1,6 @@
 # misc
 /backend/config/config.env
 
-/.gitignore
+
 
 
