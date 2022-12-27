@@ -1,6 +1,17 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
+  vendorId: {
+    type: String,
+    required: true,
+  },
+  coupon: {
+    type: String,
+  },
   shippingInfo: {
     address: {
       type: String,
