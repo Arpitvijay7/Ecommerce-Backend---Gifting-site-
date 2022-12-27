@@ -5,12 +5,11 @@ const app = express();
 
 // Routes Imports
 const Product = require("./routes/productRoute");
-const User = require("../backend/routes/userRoutes");
-const order = require("../backend/routes/orderRoute");
-
+const User = require("./routes/userRoutes");
+const order = require("./routes/orderRoute");
 
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 app.use("/api/vi", Product);
 app.use("/api/vi", User);
 app.use("/api/vi", order);
