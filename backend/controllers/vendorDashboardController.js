@@ -4,7 +4,7 @@ const ErrorHandler = require("../utils/errorhandler");
 const ApiFeatures = require("../utils/apiFeatures");
 
 // dashboard --Admin || vendor
-exports.vendorDashboard = catchAsyncError(async (req, res, next) => {
+const vendorDashboard = catchAsyncError(async (req, res, next) => {
   let vendorId = Order.findById(req.params.vendorId);
 
   if (!vendorId) {
@@ -20,3 +20,5 @@ exports.vendorDashboard = catchAsyncError(async (req, res, next) => {
     Res,
   });
 });
+
+module.exports = vendorDashboard;
