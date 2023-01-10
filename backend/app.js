@@ -1,6 +1,10 @@
 const express = require("express");
 const errorMiddleware = require("./middleware/error");
 const cookieParser = require("cookie-parser");
+
+
+
+// const cors = require("cors");
 const app = express();
 
 // Routes Imports
@@ -9,8 +13,17 @@ const User = require("../backend/routes/userRoutes");
 const order = require("../backend/routes/orderRoute");
 
 
+
+
+app.use(express.urlencoded({
+    extended: true,
+}));
+
 app.use(express.json());
-app.use(cookieParser())
+app.use(express.static('public'));
+
+
+app.use(cookieParser());
 app.use("/api/vi", Product);
 app.use("/api/vi", User);
 app.use("/api/vi", order);

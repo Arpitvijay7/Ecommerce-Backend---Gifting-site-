@@ -2,15 +2,66 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 const Product = require("../models/productModel");
 const ErrorHandler = require("../utils/errorhandler");
 const ApiFeatures = require("../utils/apiFeatures");
+const multer = require("multer");
+const fs =  require("fs");
+const path = require("path");
+
+
+// multer diskStrorage 
+const Storage =  multer.diskStorage({
+  destination : "BackendEcommerce/uploads/images",
+  filename: (req ,file,cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9+path.extname(file))
+    cb(null, file.fieldname + '-' + uniqueSuffix)
+  },
+})
+
+const filefilter = (req,file,cb)=> {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
+     cb(null,true);
+  }else{
+    cb(null,false);
+  }
+}
+
+const upload = multer({
+  storage: Storage,
+  fileFilter:filefilter,
+}).array('images',10)
+
 // Create Product   --Admin
 exports.createProduct = catchAsyncError(async (req, res, next) => {
-  req.body.user = req.user.id;
-  const product = await Product.create(req.body);
+    
+   
+   upload(req,res,async (err) => {
+    // console.log(req.file[0]);
+    if (err) {
+      console.log(err);
+    }else {
+      req.body.user = req.user._id;
+      req.body.images = [];
+      console.log(req.body);
 
-  res.status(201).json({
-    success: true,
-    product,
-  });
+      for(let i = 0 ;i < req.files.length;i++) {
+          req.body.images.push({
+            path :path.join(__dirname , '..' ,'uploads','images',req.files[i].filename),
+            contentType:req.files[i].mimetype,
+          })
+      }
+
+
+      const product = await Product.create(req.body);
+      
+      await product.save();
+      res.status(201).json({
+        success: true,
+        product,
+      });
+    }
+
+   })
+  
+
 });
 // Get all products
 exports.getAllProducts = catchAsyncError(async (req, res) => {
