@@ -10,8 +10,11 @@ const path = require("path");
 const Storage = multer.diskStorage({
   destination: "backend/uploads/images",
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.fieldname);
+    var tmp_file_arr = file.originalname.split(".");
+    var tmp_file_name = tmp_file_arr[0];
+    var tmp_file_ext = tmp_file_arr[1];
+
+    cb(null, tmp_file_name + "-" + Date.now() + "." + tmp_file_ext);
   },
 });
 
