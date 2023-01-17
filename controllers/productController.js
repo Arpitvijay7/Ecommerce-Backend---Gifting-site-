@@ -52,13 +52,7 @@ exports.createProduct = catchAsyncError(async (req, res, next) => {
 
       for (let i = 0; i < req.files.length; i++) {
         req.body.images.push({
-          path: path.join(
-            __dirname,
-            "..",
-            "uploads",
-            "images",
-            req.files[i].filename
-          ),
+          path: req.files[i].filename,
           contentType: req.files[i].mimetype,
         });
       }
