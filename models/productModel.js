@@ -21,14 +21,16 @@ const productSchema = new mongoose.Schema({
   },
   images: [
     {
-      path:String,
-      contentType: String
+      path: String,
+      contentType: String,
     },
   ],
-  category: [{
-    type: String,
-    required: [true, "please enter a Product category"],
-  }],
+  category: [
+    {
+      type: String,
+      required: [true, "please enter a Product category"],
+    },
+  ],
   stock: {
     type: Number,
     required: [true, "please enter a Product stock"],
@@ -72,7 +74,5 @@ const productSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-
-
 
 module.exports = mongoose.model("Product", productSchema);
