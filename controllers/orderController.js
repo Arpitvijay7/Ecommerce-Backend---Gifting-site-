@@ -2,35 +2,80 @@ const Order = require("../models/orderModel");
 const Product = require("../models/productModel");
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncError = require("../middleware/catchAsyncError");
+const multer = require("multer");
+const path = require("path");
+
+// multer diskStrorage 
+const Storage =  multer.diskStorage({
+  destination : "users/images",
+  filename: (req ,file,cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random())
+    cb(null, file.fieldname + '-' + uniqueSuffix + "."+ path.extname(file.originalname))
+  },
+})
+
+const filefilter = (req,file,cb)=> {
+  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
+     cb(null,true);
+  }else{
+    cb(null,false);
+  }
+}
+
+const upload = multer({
+  storage: Storage,
+  fileFilter:filefilter,
+}).array('images',10)
 
 // Create a new order
 exports.newOrder = catchAsyncError(async (req, res, next) => {
-  const {
-    shippingInfo,
-    orderItems,
-    paymentInfo,
-    itemsPrice,
-    taxPrice,
-    shippingPrice,
-    totalPrice,
-  } = req.body;
 
-  const order = await Order.create({
-    shippingInfo,
-    orderItems,
-    paymentInfo,
-    itemsPrice,
-    taxPrice,
-    shippingPrice,
-    totalPrice,
-    paidAt: Date.now(),
-    user: req.user._id,
-  });
+  upload(req,res,async (err) => {
 
-  res.status(201).json({
-    success: true,
-    order,
-  });
+    if (err) {
+      return next(new ErrorHandler(err));
+    }
+    
+    let product = await Product.findById(req.body.orderItems.product)
+    
+    let imagesSize = product.requiredImages;
+
+    if (product.isCustomizable) {
+      if (product.requiredText) {
+        if (!req.body.Text) {
+          return next(new ErrorHandler("Text is required",400));
+        }
+      }
+      console.log(req.files);
+      console.log(req.files.length);
+
+      if (imagesSize != req.files.length) {
+        return next(new ErrorHandler("Please enter the required no of images",400));
+      }
+      req.body.images = [];
+      for(let i = 0 ;i < req.files.length;i++) {
+        req.body.images.push({
+          path :path.join(__dirname , ".." ,'users','images',req.files[i].filename),
+          contentType:req.files[i].mimetype,
+        })
+    }
+    }
+    // console.log(product);
+    
+    console.log(req.files);
+    
+    req.body.user = req.user._id;
+    req.body.paidAt = Date.now();
+    
+    const order = await Order.create(req.body);
+    
+    res.status(201).json({
+      success: true,
+      order,
+    });
+
+  })
+
 });
 
 // get Single Order
