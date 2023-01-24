@@ -1,6 +1,26 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
+  userId: {
+    type: String,
+    required: true,
+  },
+  // vendorId: {
+  //   type: String,
+  //   required: true,
+  // },
+  coupon: {
+    type: String,
+  },
+  images: [{
+     path: String,
+     contentType: String,
+  }],
+  Text: {
+    type: String,
+    default: "",
+  },
+
   shippingInfo: {
     address: {
       type: String,
@@ -19,6 +39,7 @@ const orderSchema = new mongoose.Schema({
     country: {
       type: String,
       required: true,
+      default: "India",
     },
     pinCode: {
       type: Number,
@@ -54,11 +75,11 @@ const orderSchema = new mongoose.Schema({
       },
     },
   ],
-  user: {
-    type: mongoose.Schema.ObjectId,
-    ref: "User",
-    required: true,
-  },
+  // user: {
+  //   type: mongoose.Schema.ObjectId,
+  //   ref: "User",
+  //   required: true,
+  // },
   paymentInfo: {
     id: {
       type: String,
