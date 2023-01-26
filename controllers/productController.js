@@ -83,7 +83,7 @@ exports.getImage = catchAsyncError(async (req, res) => {
 
 // Get all products
 exports.getAllProducts = catchAsyncError(async (req, res) => {
-  const resultPerPage = 5;
+  const resultPerPage = 20;
   const productsCount = await Product.countDocuments();
 
   const apiFeatures = new ApiFeatures(Product.find(), req.query)
