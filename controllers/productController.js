@@ -67,9 +67,23 @@ exports.createProduct = catchAsyncError(async (req, res, next) => {
     }
   });
 });
+
+//Get product image
+exports.getImage = catchAsyncError(async (req, res) => {
+  let imageId = req.params.id;
+
+  try {
+    res.sendFile(
+      "/home/stunhaul/stunhaul_backend/backend/uploads/images/" + imageId
+    );
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 // Get all products
 exports.getAllProducts = catchAsyncError(async (req, res) => {
-  const resultPerPage = 200;
+  const resultPerPage = 5;
   const productsCount = await Product.countDocuments();
 
   const apiFeatures = new ApiFeatures(Product.find(), req.query)
